@@ -96,6 +96,7 @@ export default function LoginPage() {
                                         <FormControl>
                                             <Input
                                                 type="password"
+                                                placeholder="••••••••"
                                                 autoComplete="current-password"
                                                 {...field}
                                             />
