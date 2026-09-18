@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('fail_records', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_id')->constrained()->cascadeOnDelete();
+            // Rider (or ops) who recorded the failure.
+            $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             // Backed by App\Enums\FailReason: closed | wrong_site | no_contact.
             $table->string('reason');
             $table->text('note')->nullable();

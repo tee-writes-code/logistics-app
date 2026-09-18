@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('pods', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_id')->constrained()->cascadeOnDelete();
+            // Rider (or ops) who captured the proof of delivery.
+            $table->foreignId('delivered_by')->nullable()->constrained('users')->nullOnDelete();
             $table->string('photo_path')->nullable();
             $table->string('signature_path')->nullable();
             $table->timestamps();

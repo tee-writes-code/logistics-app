@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('return_photos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_id')->constrained()->cascadeOnDelete();
+            // Rider (or ops) who captured the return photo.
+            $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->string('photo_path')->nullable();
             $table->timestamps();
         });

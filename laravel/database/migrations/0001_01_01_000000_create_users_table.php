@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            // Backed by App\Enums\UserRole: customer | rider | ops.
+            $table->string('role')->default('customer')->index();
             $table->rememberToken();
             $table->timestamps();
         });

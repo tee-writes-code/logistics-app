@@ -15,7 +15,7 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $password = Hash::make('password');
+        $password = Hash::make('password!2457');
 
         User::updateOrCreate(
             ['email' => 'ops@logistics.test'],
