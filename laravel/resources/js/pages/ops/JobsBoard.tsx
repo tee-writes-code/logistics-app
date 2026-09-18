@@ -2,7 +2,7 @@ import { ClipboardList } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { JobStatusBadge } from '@/components/JobStatusBadge';
+import { JobStatusBadge, JOB_STATUS_LABELS } from '@/components/JobStatusBadge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,7 +21,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { get } from '@/lib/api';
-import type { Job, JobStatus, RiderBoardEntry } from '@/lib/types';
+import type { Job, JobStatus, JobWindow, RiderBoardEntry } from '@/lib/types';
 
 const STATUSES: JobStatus[] = [
     'booked', 'assigned', 'en_route_pickup', 'at_pickup', 'picked_up',
@@ -30,17 +30,21 @@ const STATUSES: JobStatus[] = [
 
 const ALL = 'all';
 
+const WINDOW_LABELS: Record<JobWindow, string> = {
+    same_day: 'Same day',
+    next: 'Next',
+};
+
 // Base UI's Select renders the raw value in the trigger unless it can map value
 // to a label via `items`. These records keep the trigger label in sync with the
 // SelectItem text below.
 const statusItems: Record<string, string> = {
     [ALL]: 'All statuses',
-    ...Object.fromEntries(STATUSES.map((s) => [s, s])),
+    ...Object.fromEntries(STATUSES.map((s) => [s, JOB_STATUS_LABELS[s]])),
 };
 const WINDOW_ITEMS: Record<string, string> = {
     [ALL]: 'All windows',
-    same_day: 'Same day',
-    next: 'Next',
+    ...WINDOW_LABELS,
 };
 
 /** The Ops jobs board: every job with status/rider/window filters. */
@@ -94,7 +98,7 @@ export default function JobsBoard() {
                     <SelectContent>
                         <SelectItem value={ALL}>All statuses</SelectItem>
                         {STATUSES.map((s) => (
-                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                            <SelectItem key={s} value={s}>{JOB_STATUS_LABELS[s]}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -119,8 +123,8 @@ export default function JobsBoard() {
                     <SelectTrigger className="w-48"><SelectValue placeholder="Window" /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value={ALL}>All windows</SelectItem>
-                        <SelectItem value="same_day">Same day</SelectItem>
-                        <SelectItem value="next">Next</SelectItem>
+                        <SelectItem value="same_day">{WINDOW_LABELS.same_day}</SelectItem>
+                        <SelectItem value="next">{WINDOW_LABELS.next}</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -142,7 +146,7 @@ export default function JobsBoard() {
                         <TableRow key={job.id}>
                             <TableCell>#{job.id}</TableCell>
                             <TableCell><JobStatusBadge status={job.status} /></TableCell>
-                            <TableCell>{job.window}</TableCell>
+                            <TableCell>{WINDOW_LABELS[job.window]}</TableCell>
                             <TableCell>{job.assigned_rider?.name ?? '—'}</TableCell>
                             <TableCell className="max-w-56 truncate">{job.drop_address}</TableCell>
                             <TableCell>

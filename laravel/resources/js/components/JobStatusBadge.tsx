@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import type { JobStatus } from '@/lib/types';
 
-const LABELS: Record<JobStatus, string> = {
+export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
     booked: 'Booked',
     assigned: 'Assigned',
     en_route_pickup: 'En route to pickup',
@@ -34,5 +34,5 @@ const VARIANTS: Record<JobStatus, BadgeVariant> = {
 };
 
 export function JobStatusBadge({ status }: { status: JobStatus }) {
-    return <Badge variant={VARIANTS[status]}>{LABELS[status]}</Badge>;
+    return <Badge variant={VARIANTS[status]}>{JOB_STATUS_LABELS[status]}</Badge>;
 }

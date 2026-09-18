@@ -17,7 +17,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ApiError, get, patch, post } from '@/lib/api';
-import type { AgentAsk, Job, RiderBoardEntry } from '@/lib/types';
+import type { AgentAsk, Job, JobWindow, RiderBoardEntry } from '@/lib/types';
+
+const WINDOW_LABELS: Record<JobWindow, string> = {
+    same_day: 'Same day',
+    next: 'Next',
+};
 
 /** Ops job detail: edit on behalf, reassign, cancel, and resolve asks. */
 export default function JobDetailOps() {
@@ -120,7 +125,7 @@ export default function JobDetailOps() {
                         <div><span className="font-medium">Drop:</span> {job.drop_address}</div>
                         <div><span className="font-medium">Contact:</span> {job.drop_contact_name} · {job.drop_contact_phone}</div>
                         <div><span className="font-medium">Rider:</span> {job.assigned_rider?.name ?? '—'}</div>
-                        <div><span className="font-medium">Window:</span> {job.window}</div>
+                        <div><span className="font-medium">Window:</span> {WINDOW_LABELS[job.window]}</div>
                         <div><span className="font-medium">ETA:</span> {job.eta_at ? new Date(job.eta_at).toLocaleString() : '—'}</div>
 
                         <div className="grid gap-2 pt-2">
