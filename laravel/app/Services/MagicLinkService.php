@@ -37,7 +37,9 @@ final class MagicLinkService
     }
 
     /**
-     * Build the signed URL a recipient uses to open their job.
+     * Build the signed API URL a recipient uses to open their job. Retained for
+     * the signed-route access path and its security tests; the SPA recipient view
+     * is reached through trackUrlFor().
      */
     public function urlFor(MagicLinkSession $session): string
     {
@@ -46,6 +48,54 @@ final class MagicLinkService
             $session->expires_at,
             ['job' => $session->job_id, 'token' => $session->token],
         );
+    }
+
+    /**
+     * Build the client SPA URL a recipient opens: an unauthenticated hash route
+     * scoped by the session token. This is the link carried in the mock SMS row.
+     */
+    public function trackUrlFor(MagicLinkSession $session): string
+    {
+        return rtrim((string) config('app.url'), '/').'/#/track/'.$session->token;
+    }
+
+    /**
+     * Resolve the single live job for a bare token (token-first, no job id in the
+     * URL), or null when the token does not match a session, the session is
+     * revoked or expired, or the job has reached a terminal state.
+     *
+     * The token is a 48-char unguessable secret on a unique index, so it alone
+     * scopes access to exactly one job — a second job is never reachable.
+     */
+    public function resolveByToken(string $token): ?Job
+    {
+        $session = MagicLinkSession::query()
+            ->where('token', $token)
+            ->whereNull('revoked_at')
+            ->first();
+
+        if ($session === null || ! $session->isValid()) {
+            return null;
+        }
+
+        $job = $session->job;
+
+        if ($job === null || $job->status->isTerminal()) {
+            return null;
+        }
+
+        return $job;
+    }
+
+    /**
+     * Revoke any active magic-link session for a job. Called when a job reaches a
+     * terminal state (delivered/returned/cancelled) so the link becomes read-only.
+     */
+    public function expire(Job $job): void
+    {
+        $job->magicLinkSession()
+            ->whereNull('revoked_at')
+            ->update(['revoked_at' => now()]);
     }
 
     /**

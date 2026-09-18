@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['job_id', 'photo_path', 'signature_path'])]
+#[Fillable(['job_id', 'delivered_by', 'photo_path', 'signature_path'])]
 class Pod extends Model
 {
     /** @use HasFactory<PodFactory> */

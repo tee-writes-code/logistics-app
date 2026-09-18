@@ -9,4 +9,5 @@ enum FailReason: string
     case Closed = 'closed';
     case WrongSite = 'wrong_site';
     case NoContact = 'no_contact';
+    case Refused = 'refused';
 }

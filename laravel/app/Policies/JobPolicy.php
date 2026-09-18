@@ -50,11 +50,36 @@ class JobPolicy
     }
 
     /**
-     * The owning customer or the assigned rider may update a job.
+     * Only the owning customer (or ops via before()) may edit a job's
+     * customer-owned fields (drop details, contact, instructions, notes) through
+     * the customer PATCH route. The assigned rider drives the lifecycle through the
+     * separate `execute` ability and must never mutate the customer's fields here.
      */
     public function update(User $user, Job $job): bool
     {
-        return $this->owns($user, $job) || $this->isAssignedRider($user, $job);
+        return $this->owns($user, $job);
+    }
+
+    /**
+     * The owning customer may cancel their job (ops via before()). The status
+     * window (only before pickup) is enforced in the controller, not here.
+     */
+    public function cancel(User $user, Job $job): bool
+    {
+        return $this->owns($user, $job);
+    }
+
+    /**
+     * A rider may execute (drive the lifecycle of) a job assigned to them.
+     *
+     * This gates ownership only, so a rider reaching another rider's job gets a
+     * 403. Whether the job is the rider's ONE active job is a separate, softer
+     * check enforced as a 409 in the rider endpoints (acting on a non-active but
+     * owned job is a conflict, not a forbidden access).
+     */
+    public function execute(User $user, Job $job): bool
+    {
+        return $this->isAssignedRider($user, $job);
     }
 
     /**

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['job_id', 'photo_path'])]
+#[Fillable(['job_id', 'recorded_by', 'photo_path'])]
 class ReturnPhoto extends Model
 {
     /** @use HasFactory<ReturnPhotoFactory> */

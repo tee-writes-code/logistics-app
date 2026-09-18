@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['job_id', 'reason', 'note'])]
+#[Fillable(['job_id', 'recorded_by', 'reason', 'note'])]
 class FailRecord extends Model
 {
     /** @use HasFactory<FailRecordFactory> */

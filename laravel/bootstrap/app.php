@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureDemoAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Enable Sanctum SPA (cookie) auth for stateful first-party clients.
         $middleware->statefulApi();
+
+        // Ops-only, non-production guard for the /api/demo/* operator controls.
+        $middleware->alias([
+            'demo' => EnsureDemoAccess::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

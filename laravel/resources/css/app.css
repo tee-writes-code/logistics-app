@@ -126,5 +126,12 @@
 
     body {
         @apply bg-background text-foreground;
+        /* Base UI: anchor portalled popups to the document body. */
+        position: relative;
+    }
+
+    /* Base UI: isolate the app root so portalled layers stack above app content. */
+    #root {
+        isolation: isolate;
     }
 }

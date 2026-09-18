@@ -92,6 +92,54 @@ class Job extends Model
     }
 
     /**
+     * Drop, contact, and instruction fields are editable only before a rider is
+     * assigned (i.e. while still `booked`).
+     */
+    public function isEditableDropStage(): bool
+    {
+        return $this->status === JobStatus::Booked;
+    }
+
+    /**
+     * Notes stay editable through the run until the rider is on site.
+     */
+    public function isNotesEditable(): bool
+    {
+        return in_array($this->status, [
+            JobStatus::Booked,
+            JobStatus::Assigned,
+            JobStatus::EnRoutePickup,
+            JobStatus::AtPickup,
+            JobStatus::PickedUp,
+            JobStatus::EnRouteDrop,
+        ], true);
+    }
+
+    /**
+     * A job can be cancelled by the customer any time before pickup.
+     */
+    public function isCancelable(): bool
+    {
+        return in_array($this->status, [JobStatus::Booked, JobStatus::Assigned], true);
+    }
+
+    /**
+     * Whether the job has reached a terminal status (delegates to the enum).
+     */
+    public function isTerminal(): bool
+    {
+        return $this->status->isTerminal();
+    }
+
+    /**
+     * Whether the job is the rider's single active job right now.
+     */
+    public function isActiveForRider(): bool
+    {
+        return $this->is_active_for_rider && ! $this->isTerminal();
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function customer(): BelongsTo
@@ -177,6 +225,14 @@ class Job extends Model
     public function agentActionLogs(): HasMany
     {
         return $this->hasMany(AgentActionLog::class);
+    }
+
+    /**
+     * @return HasMany<AgentAsk, $this>
+     */
+    public function agentAsks(): HasMany
+    {
+        return $this->hasMany(AgentAsk::class);
     }
 
     /**

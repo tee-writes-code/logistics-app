@@ -24,14 +24,15 @@ export default function Landing() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-3">
-                    <Button asChild>
-                        <Link to="/style-check">View style check</Link>
-                    </Button>
-                    <Button variant="outline" asChild>
-                        <a href="https://ui.shadcn.com" target="_blank" rel="noreferrer">
-                            shadcn docs
-                        </a>
-                    </Button>
+                    <Button render={<Link to="/style-check">View style check</Link>} />
+                    <Button
+                        variant="outline"
+                        render={
+                            <a href="https://ui.shadcn.com" target="_blank" rel="noreferrer">
+                                shadcn docs
+                            </a>
+                        }
+                    />
                 </CardContent>
             </Card>
         </main>
